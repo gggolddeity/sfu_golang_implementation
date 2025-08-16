@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webrtc agent</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .hidden {
+            display: none !important;
+        }
+        #logs {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .session-area {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-4">
+    <!-- Форма ввода данных -->
+    <div id="entry-form-container" class="form-container">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">🚀 WebRTC Agent Configuration</h4>
+            </div>
+            <div class="card-body">
+                <form id="container__entry__form">
+                    <div class="mb-3">
+                        <label for="open_ai_token" class="form-label">
+                            <i class="bi bi-key"></i> OpenAI Token
+                        </label>
+                        <input
+                                value="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"
+                                type="password" class="form-control" id="open_ai_token" name="open_ai_token"
+                               placeholder="Введите ваш OpenAI токен" required>
+                        <div class="form-text">Токен будет сохранен локально в браузере</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="room_id"
+                               class="form-label">
+                            <i class="bi bi-door-open"></i> Room Name
+                        </label>
+                        <input
+                                value="random_room"
+                                type="text" class="form-control" id="room_id" name="room_id"
+                               placeholder="Название комнаты" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="peer_id" class="form-label">
+                            <i class="bi bi-person"></i> Your Name
+                        </label>
+                        <input
+                                value="gaylord"
+                                type="text" class="form-control" id="peer_id" name="peer_id"
+                               placeholder="Ваше имя" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="bi bi-translate"></i> Language
+                        </label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="lang" id="ru" value="ru" checked>
+                            <label class="form-check-label" for="ru">
+                                🇷🇺 Russian
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="lang" id="en" value="en">
+                            <label class="form-check-label" for="en">
+                                🇺🇸 English
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-arrow-right-circle"></i> Продолжить к сессии
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Форма работы с сессиями -->
+    <div id="session-container" class="form-container hidden">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-primary">🔗 WebRTC Session</h2>
+            <div>
+                <button id="back-btn" class="btn btn-outline-secondary me-2">
+                    <i class="bi bi-arrow-left"></i> Назад
+                </button>
+                <span class="badge bg-info" id="user-info"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="session-area">
+                    <h5 class="text-success">📤 Browser Session Description</h5>
+                    <textarea id="localSessionDescription" class="form-control mb-3"
+                              rows="6" readonly placeholder="Ожидание SDP..."></textarea>
+                    <button id="start-session-btn" class="btn btn-success w-100" disabled>
+                        <i class="bi bi-clipboard"></i> Start Session
+                    </button>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="session-area">
+                    <h5 class="text-warning">📥 Remote Session Description</h5>
+                    <textarea id="remoteSessionDescription" class="form-control mb-3"
+                              rows="6" placeholder="Вставьте SDP от сервера..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h6 class="mb-0">🎵 Audio Stream</h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="audio1" class="text-center">
+                            <p class="text-muted">Аудио поток появится здесь</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header bg-secondary text-white d-flex justify-content-between">
+                        <h6 class="mb-0">📋 Logs</h6>
+                        <button id="clear-logs-btn" class="btn btn-sm btn-outline-light">Очистить</button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div id="logs"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Webrtc agent</title>-->
+<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">-->
+<!--</head>-->
+<!--<body>-->
+<!--    <div id="container">-->
+<!--        <form id="container__entry__form">-->
+<!--            <label for="open_ai_token">Open ai token</label>-->
+<!--            <input type="text" id="open_ai_token" name="open_ai_token">-->
+<!--            <label for="room_id">Enter room name</label>-->
+<!--            <input type="text" id="room_id" name="room_id">-->
+<!--            <label for="peer_id">Your name</label>-->
+<!--            <input type="text" name="peer_id" id="peer_id">-->
+<!--            <div>-->
+<!--                <input type="radio" id="ru" value="ru" name="lang">-->
+<!--                <label for="ru">Russian</label>-->
+<!--                <input type="radio" id="en" value="en" name="lang">-->
+<!--                <label for="ru">English</label>-->
+<!--            </div>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--    <div id="container__conversation">-->
+<!--        Browser base64 Session Description<br />-->
+<!--        <textarea id="localSessionDescription" readonly="true"></textarea> <br />-->
+<!--        <button onclick="window.copySDP()">-->
+<!--            Copy browser SDP to clipboard-->
+<!--        </button>-->
+<!--        <br />-->
+<!--        <br />-->
+
+<!--        Golang base64 Session Description<br />-->
+<!--        <textarea id="remoteSessionDescription"></textarea> <br/>-->
+<!--        <button onclick="window.startSession()"> Start Session </button><br />-->
+
+<!--        <br />-->
+
+<!--        Video<br />-->
+<!--        <div id="audio1"></div> <br />-->
+
+<!--        Logs<br />-->
+<!--        <div id="logs"></div>-->
+<!--    </div>-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>-->
+<!--    <script src="index.js"></script>-->
+<!--</body>-->
+<!--</html>-->

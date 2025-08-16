@@ -1,0 +1,47 @@
+{"time":"2025-07-27T17:33:32.965620855+05:00","level":"DEBUG","msg":"You gay"}
+{"time":"2025-07-27T17:33:32.965700603+05:00","level":"DEBUG","msg":"You gay"}
+{"time":"2025-07-27T17:33:32.965704129+05:00","level":"DEBUG","msg":"You gay"}
+{"time":"2025-07-27T17:33:32.965706153+05:00","level":"DEBUG","msg":"You gay"}
+{"time":"2025-07-27T17:33:36.554567554+05:00","level":"DEBUG","msg":"You gay"}
+{"time":"2025-07-27T17:33:36.554654003+05:00","level":"DEBUG","msg":"You gay"}
+{"time":"2025-07-27T17:33:36.554657592+05:00","level":"DEBUG","msg":"You gay"}
+{"time":"2025-07-27T17:33:36.554659597+05:00","level":"DEBUG","msg":"You gay"}
+{"time":"2025-07-27T17:34:16.198936372+05:00","level":"DEBUG","msg":"You gay"}
+{"time":"2025-07-27T17:34:16.199018034+05:00","level":"DEBUG","msg":"You gay"}
+{"time":"2025-07-27T17:34:16.199021577+05:00","level":"DEBUG","msg":"You gay"}
+{"time":"2025-07-27T17:34:16.199023567+05:00","level":"DEBUG","msg":"You gay"}
+{"time":"2025-07-27T17:36:48.745101398+05:00","level":"DEBUG","msg":"You gay"}
+{"time":"2025-07-27T17:36:50.532625329+05:00","level":"DEBUG","msg":"You gay"}
+{"time":"2025-07-27T17:37:04.57163268+05:00","level":"DEBUG","msg":"test_log"}
+{"time":"2025-07-27T17:37:04.571716627+05:00","level":"DEBUG","msg":"test_log1"}
+{"time":"2025-07-27T17:37:04.571723328+05:00","level":"DEBUG","msg":"test_log2"}
+{"time":"2025-07-27T17:37:55.299654913+05:00","level":"DEBUG","source":{"function":"main.main","file":"/home/deity/GolandProjects/rtc_testing/cmd/signaling/main.go","line":45},"msg":"test_log"}
+{"time":"2025-07-27T17:37:55.299747767+05:00","level":"DEBUG","source":{"function":"main.main","file":"/home/deity/GolandProjects/rtc_testing/cmd/signaling/main.go","line":45},"msg":"test_log1"}
+{"time":"2025-07-27T17:37:55.299759719+05:00","level":"DEBUG","source":{"function":"main.main","file":"/home/deity/GolandProjects/rtc_testing/cmd/signaling/main.go","line":45},"msg":"test_log2"}
+{"time":"2025-07-27T19:02:01.368851503+05:00","level":"DEBUG","msg":"8082"}
+{"time":"2025-07-27T19:02:01.3690773+05:00","level":"DEBUG","source":{"function":"main.main","file":"/home/deity/GolandProjects/rtc_testing/cmd/signaling/main.go","line":51},"msg":"test_log"}
+{"time":"2025-07-27T19:02:01.369095966+05:00","level":"DEBUG","source":{"function":"main.main","file":"/home/deity/GolandProjects/rtc_testing/cmd/signaling/main.go","line":51},"msg":"test_log1"}
+{"time":"2025-07-27T19:02:01.36910616+05:00","level":"DEBUG","source":{"function":"main.main","file":"/home/deity/GolandProjects/rtc_testing/cmd/signaling/main.go","line":51},"msg":"test_log2"}
+{"time":"2025-07-27T19:03:14.669123393+05:00","level":"DEBUG","msg":"8082"}
+{"time":"2025-07-27T19:03:14.669210643+05:00","level":"DEBUG","source":{"function":"main.main","file":"/home/deity/GolandProjects/rtc_testing/cmd/signaling/main.go","line":51},"msg":"test_log"}
+{"time":"2025-07-27T19:03:14.669220797+05:00","level":"DEBUG","source":{"function":"main.main","file":"/home/deity/GolandProjects/rtc_testing/cmd/signaling/main.go","line":51},"msg":"test_log1"}
+{"time":"2025-07-27T19:03:14.669226799+05:00","level":"DEBUG","source":{"function":"main.main","file":"/home/deity/GolandProjects/rtc_testing/cmd/signaling/main.go","line":51},"msg":"test_log2"}
+{"time":"2025-07-27T19:03:33.336495202+05:00","level":"DEBUG","msg":"8082"}
+{"time":"2025-07-27T19:03:33.336578512+05:00","level":"DEBUG","source":{"function":"main.main","file":"/home/deity/GolandProjects/rtc_testing/cmd/signaling/main.go","line":51},"msg":"test_log"}
+{"time":"2025-07-27T19:03:33.336588529+05:00","level":"DEBUG","source":{"function":"main.main","file":"/home/deity/GolandProjects/rtc_testing/cmd/signaling/main.go","line":51},"msg":"test_log1"}
+{"time":"2025-07-27T19:03:33.336594511+05:00","level":"DEBUG","source":{"function":"main.main","file":"/home/deity/GolandProjects/rtc_testing/cmd/signaling/main.go","line":51},"msg":"test_log2"}
+{"time":"2025-07-27T19:04:11.25454602+05:00","level":"DEBUG","msg":"8082"}
+{"time":"2025-07-27T19:04:11.254635671+05:00","level":"DEBUG","source":{"function":"main.main","file":"/home/deity/GolandProjects/rtc_testing/cmd/signaling/main.go","line":51},"msg":"test_log"}
+{"time":"2025-07-27T19:04:11.25465206+05:00","level":"DEBUG","source":{"function":"main.main","file":"/home/deity/GolandProjects/rtc_testing/cmd/signaling/main.go","line":51},"msg":"test_log1"}
+{"time":"2025-07-27T19:04:11.254659043+05:00","level":"DEBUG","source":{"function":"main.main","file":"/home/deity/GolandProjects/rtc_testing/cmd/signaling/main.go","line":51},"msg":"test_log2"}
+{"time":"2025-07-27T19:08:57.595704203+05:00","level":"DEBUG","msg":"8082"}
+{"time":"2025-07-27T19:08:57.595797076+05:00","level":"DEBUG","source":{"function":"main.main","file":"/home/deity/GolandProjects/rtc_testing/cmd/signaling/main.go","line":55},"msg":"72167"}
+{"time":"2025-07-27T19:09:13.875298417+05:00","level":"DEBUG","msg":"8082"}
+{"time":"2025-07-27T19:09:13.875416573+05:00","level":"DEBUG","source":{"function":"main.main","file":"/home/deity/GolandProjects/rtc_testing/cmd/signaling/main.go","line":55},"msg":"Pid is: 73719"}
+{"time":"2025-07-27T19:09:49.194109318+05:00","level":"DEBUG","source":{"function":"main.main","file":"/home/deity/GolandProjects/rtc_testing/cmd/signaling/main.go","line":53},"msg":"Running server on port 8082"}
+{"time":"2025-07-27T19:10:10.043887154+05:00","level":"DEBUG","source":{"function":"main.main","file":"/home/deity/GolandProjects/rtc_testing/cmd/signaling/main.go","line":57},"msg":"Running server on port 8082"}
+{"time":"2025-07-27T19:10:55.917423497+05:00","level":"DEBUG","source":{"function":"main.main","file":"/home/deity/GolandProjects/rtc_testing/cmd/signaling/main.go","line":56},"msg":"Running server on port 8080"}
+{"time":"2025-07-27T19:10:59.480203732+05:00","level":"DEBUG","source":{"function":"main.main","file":"/home/deity/GolandProjects/rtc_testing/cmd/signaling/main.go","line":56},"msg":"Running server on port 8081"}
+{"time":"2025-07-27T19:12:26.743234509+05:00","level":"DEBUG","source":{"function":"main.main","file":"/home/deity/GolandProjects/rtc_testing/cmd/signaling/main.go","line":56},"msg":"Running server on port 8081"}
+{"time":"2025-07-27T19:12:43.521745182+05:00","level":"DEBUG","source":{"function":"main.main","file":"/home/deity/GolandProjects/rtc_testing/cmd/signaling/main.go","line":56},"msg":"Running server on port 8081"}
+{"time":"2025-07-27T19:14:12.73647138+05:00","level":"DEBUG","source":{"function":"main.main","file":"/home/deity/GolandProjects/rtc_testing/cmd/signaling/main.go","line":56},"msg":"Running server on port 8081"}
