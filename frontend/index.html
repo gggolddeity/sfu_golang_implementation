@@ -1,154 +1,180 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webrtc agent</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>WebRTC Room</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+
     <style>
-        .form-container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .hidden {
-            display: none !important;
-        }
-        #logs {
-            max-height: 200px;
-            overflow-y: auto;
-            background: #f8f9fa;
-            padding: 10px;
-            border-radius: 5px;
-            font-family: monospace;
-            font-size: 12px;
-        }
-        .session-area {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
+        .hidden { display: none !important; }
+        .form-container { max-width: 680px; margin: 0 auto; padding: 20px; }
+        #logs { max-height: 160px; overflow-y: auto; background: #f8f9fa; padding: 10px; border-radius: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size: 12px; }
+        .chat-messages { height: 52vh; overflow-y: auto; padding: 12px; background: #fff; border: 1px solid #e9ecef; border-top: 0; border-radius: 0 0 .5rem .5rem; }
+        .peer-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-bottom: 1px solid #f1f3f5; }
+        .peer-avatar { width: 36px; height: 36px; border-radius: 999px; display: grid; place-items: center; background: #e9ecef; font-weight: 600; }
+        .peer-meta small { color: #6c757d; }
+        .tab-tools { border: 1px solid #e9ecef; border-top: 0; padding: 10px; border-radius: 0 0 .5rem .5rem; background: #f8f9fa; }
+        .badge-kind { text-transform: uppercase; font-weight: 600; }
     </style>
 </head>
 <body>
 <div class="container mt-4">
-    <!-- Форма ввода данных -->
+    <!-- Форма входа -->
     <div id="entry-form-container" class="form-container">
-        <div class="card">
+        <div class="card shadow-sm">
             <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">🚀 WebRTC Agent Configuration</h4>
+                <h4 class="mb-0">🚀 Подключение</h4>
             </div>
+
             <div class="card-body">
-                <form id="container__entry__form">
-                    <div class="mb-3">
-                        <label for="open_ai_token" class="form-label">
-                            <i class="bi bi-key"></i> OpenAI Token
-                        </label>
-                        <input
-                                value="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"
-                                type="password" class="form-control" id="open_ai_token" name="open_ai_token"
-                               placeholder="Введите ваш OpenAI токен" required>
-                        <div class="form-text">Токен будет сохранен локально в браузере</div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="room_id"
-                               class="form-label">
-                            <i class="bi bi-door-open"></i> Room Name
-                        </label>
-                        <input
-                                value="random_room"
-                                type="text" class="form-control" id="room_id" name="room_id"
-                               placeholder="Название комнаты" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="peer_id" class="form-label">
-                            <i class="bi bi-person"></i> Your Name
-                        </label>
-                        <input
-                                value="gaylord"
-                                type="text" class="form-control" id="peer_id" name="peer_id"
-                               placeholder="Ваше имя" required>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label">
-                            <i class="bi bi-translate"></i> Language
-                        </label>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="lang" id="ru" value="ru" checked>
-                            <label class="form-check-label" for="ru">
-                                🇷🇺 Russian
-                            </label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="lang" id="en" value="en">
-                            <label class="form-check-label" for="en">
-                                🇺🇸 English
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="bi bi-arrow-right-circle"></i> Продолжить к сессии
+                <ul class="nav nav-tabs" id="entryTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="tab-create" data-bs-toggle="tab" data-bs-target="#pane-create" type="button" role="tab" aria-controls="pane-create" aria-selected="true">
+                            <i class="bi bi-plus-circle"></i> Создать/настроить комнату
                         </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="tab-join" data-bs-toggle="tab" data-bs-target="#pane-join" type="button" role="tab" aria-controls="pane-join" aria-selected="false">
+                            <i class="bi bi-box-arrow-in-right"></i> Войти в комнату
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content pt-3">
+                    <!-- Вкладка: создать (как раньше) -->
+                    <div class="tab-pane fade show active" id="pane-create" role="tabpanel" aria-labelledby="tab-create" tabindex="0">
+                        <form id="container__entry__form">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="open_ai_token" class="form-label"><i class="bi bi-key"></i> OpenAI Token</label>
+                                    <input value="sk-" type="password" class="form-control" id="open_ai_token" name="open_ai_token" placeholder="Введите ваш OpenAI токен" required>
+                                    <div class="form-text">Токен сохранится локально в браузере.</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="room_id" class="form-label"><i class="bi bi-door-open"></i> Room ID</label>
+                                    <input value="random_room" type="text" class="form-control" id="room_id" name="room_id" placeholder="room-123" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="peer_id" class="form-label"><i class="bi bi-person"></i> Ваше имя (peer)</label>
+                                    <input value="gaylord" type="text" class="form-control" id="peer_id" name="peer_id" placeholder="Ваше имя" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label"><i class="bi bi-translate"></i> Язык</label>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="lang" id="ru" value="ru" checked>
+                                            <label class="form-check-label" for="ru">🇷🇺 Russian</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="lang" id="en" value="en">
+                                            <label class="form-check-label" for="en">🇺🇸 English</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-grid mt-3">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-arrow-right-circle"></i> Войти (создать конфигурацию)
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                </form>
+
+                    <!-- Вкладка: войти (НОВАЯ) -->
+                    <div class="tab-pane fade" id="pane-join" role="tabpanel" aria-labelledby="tab-join" tabindex="0">
+                        <form id="container__join__form">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="room_id_join" class="form-label"><i class="bi bi-door-open"></i> Room ID</label>
+                                    <input value="random_room" type="text" class="form-control" id="room_id_join" name="room_id_join" placeholder="room-123" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="peer_id_join" class="form-label"><i class="bi bi-person"></i> Ваше имя (peer)</label>
+                                    <input value="gaylord" type="text" class="form-control" id="peer_id_join" name="peer_id_join" placeholder="Ваше имя" required>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label"><i class="bi bi-translate"></i> Язык</label>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="lang_join" id="ru_join" value="ru" checked>
+                                            <label class="form-check-label" for="ru_join">🇷🇺 Russian</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="lang_join" id="en_join" value="en">
+                                            <label class="form-check-label" for="en_join">🇺🇸 English</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-grid mt-3">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="bi bi-box-arrow-in-right"></i> Войти в комнату
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div> <!-- /tab-content -->
             </div>
         </div>
     </div>
 
-    <!-- Форма работы с сессиями -->
-    <div id="session-container" class="form-container hidden">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="text-primary">🔗 WebRTC Session</h2>
+    <!-- Экран сессии -->
+    <div id="session-container" class="hidden">
+        <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
-                <button id="back-btn" class="btn btn-outline-secondary me-2">
-                    <i class="bi bi-arrow-left"></i> Назад
+                <h3 class="mb-0">🔗 Комната</h3>
+                <small id="user-info" class="text-muted"></small>
+                <div class="spinner-border" id="spinner-loading" role="status">
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <button id="btn-mute" class="btn btn-outline-danger">
+                    <i class="bi bi-mic-mute"></i> Мьют
                 </button>
-                <span class="badge bg-info" id="user-info"></span>
+                <button id="back-btn" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Выход
+                </button>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-6 mb-4">
-                <div class="session-area">
-                    <h5 class="text-success">📤 Browser Session Description</h5>
-                    <textarea id="localSessionDescription" class="form-control mb-3"
-                              rows="6" readonly placeholder="Ожидание SDP..."></textarea>
-                    <button id="start-session-btn" class="btn btn-success w-100" disabled>
-                        <i class="bi bi-clipboard"></i> Start Session
-                    </button>
-                </div>
-            </div>
-
-            <div class="col-md-6 mb-4">
-                <div class="session-area">
-                    <h5 class="text-warning">📥 Remote Session Description</h5>
-                    <textarea id="remoteSessionDescription" class="form-control mb-3"
-                              rows="6" placeholder="Вставьте SDP от сервера..."></textarea>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6 mb-4">
-                <div class="card">
-                    <div class="card-header bg-info text-white">
-                        <h6 class="mb-0">🎵 Audio Stream</h6>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light">
+                        <strong>👥 Участники</strong>
+                        <span id="peers-count" class="badge text-bg-secondary ms-2">0</span>
                     </div>
-                    <div class="card-body">
-                        <div id="audio1" class="text-center">
-                            <p class="text-muted">Аудио поток появится здесь</p>
+                    <div id="peers-list" class="list-group list-group-flush"></div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light d-flex align-items-center justify-content-between">
+                        <strong>💬 Чат</strong>
+                        <div id="active-langs" class="d-flex gap-1"></div>
+                    </div>
+
+                    <ul id="chat-tabs" class="nav nav-tabs"></ul>
+                    <div id="chat-tab-content" class="tab-content"></div>
+
+                    <div class="tab-tools">
+                        <div class="input-group">
+                            <input id="chat-input" class="form-control" placeholder="Сообщение"/>
+                            <button class="btn btn-outline-secondary" id="send-msg-btn" type="button">Отправить</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-6 mb-4">
+            <div class="col-12">
                 <div class="card">
                     <div class="card-header bg-secondary text-white d-flex justify-content-between">
                         <h6 class="mb-0">📋 Logs</h6>
@@ -160,6 +186,8 @@
                 </div>
             </div>
         </div>
+
+        <audio id="remoteAudio" autoplay playsinline class="hidden"></audio>
     </div>
 </div>
 
@@ -167,52 +195,3 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-<!--<!DOCTYPE html>-->
-<!--<html lang="en">-->
-<!--<head>-->
-<!--    <meta charset="UTF-8">-->
-<!--    <title>Webrtc agent</title>-->
-<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">-->
-<!--</head>-->
-<!--<body>-->
-<!--    <div id="container">-->
-<!--        <form id="container__entry__form">-->
-<!--            <label for="open_ai_token">Open ai token</label>-->
-<!--            <input type="text" id="open_ai_token" name="open_ai_token">-->
-<!--            <label for="room_id">Enter room name</label>-->
-<!--            <input type="text" id="room_id" name="room_id">-->
-<!--            <label for="peer_id">Your name</label>-->
-<!--            <input type="text" name="peer_id" id="peer_id">-->
-<!--            <div>-->
-<!--                <input type="radio" id="ru" value="ru" name="lang">-->
-<!--                <label for="ru">Russian</label>-->
-<!--                <input type="radio" id="en" value="en" name="lang">-->
-<!--                <label for="ru">English</label>-->
-<!--            </div>-->
-<!--        </form>-->
-<!--    </div>-->
-<!--    <div id="container__conversation">-->
-<!--        Browser base64 Session Description<br />-->
-<!--        <textarea id="localSessionDescription" readonly="true"></textarea> <br />-->
-<!--        <button onclick="window.copySDP()">-->
-<!--            Copy browser SDP to clipboard-->
-<!--        </button>-->
-<!--        <br />-->
-<!--        <br />-->
-
-<!--        Golang base64 Session Description<br />-->
-<!--        <textarea id="remoteSessionDescription"></textarea> <br/>-->
-<!--        <button onclick="window.startSession()"> Start Session </button><br />-->
-
-<!--        <br />-->
-
-<!--        Video<br />-->
-<!--        <div id="audio1"></div> <br />-->
-
-<!--        Logs<br />-->
-<!--        <div id="logs"></div>-->
-<!--    </div>-->
-<!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>-->
-<!--    <script src="index.js"></script>-->
-<!--</body>-->
-<!--</html>-->
