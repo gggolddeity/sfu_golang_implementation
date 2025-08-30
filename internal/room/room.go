@@ -142,7 +142,6 @@ type Room struct {
 	OAKey           string
 	mu              sync.RWMutex
 	languages       map[Lang]bool
-	chatMessages    map[string][]byte
 	routers         map[string]*Router
 	shouldTranslate *atomic.Bool
 	evtSeq, msgSeq  int
@@ -155,6 +154,18 @@ type Router struct {
 	subsMu  sync.RWMutex
 	subs    map[string]*webrtc.TrackLocalStaticRTP
 	cancel  context.CancelFunc
+}
+
+type StartConversationRequest struct {
+	RoomID      string `json:"room_id"`
+	PeerID      string `json:"peer_id"`
+	Lang        Lang   `json:"lang"`
+	OpenAiToken string `json:"open_ai_token,omitempty"`
+}
+
+type StartWebrtcConnectionRequest struct {
+	RoomID string `json:"room_id"`
+	PeerID string `json:"peer_id"`
 }
 
 func (room *Room) incLockedEvtSeq() int { room.evtSeq++; return room.evtSeq }
@@ -200,11 +211,6 @@ type InStream struct {
 	mu        sync.RWMutex
 }
 
-type OutStream struct {
-	Track *webrtc.TrackLocalStaticRTP
-	ready *atomic.Bool
-}
-
 func (i *InStream) pop20ms() []int16 {
 	if i.dec == nil {
 		return nil
@@ -233,18 +239,6 @@ func (i *InStream) pop20ms() []int16 {
 	copy(out, i.pending[:need])
 	i.pending = i.pending[need:]
 	return out
-}
-
-type StartConversationRequest struct {
-	RoomID      string `json:"room_id"`
-	PeerID      string `json:"peer_id"`
-	Lang        Lang   `json:"lang"`
-	OpenAiToken string `json:"open_ai_token,omitempty"`
-}
-
-type StartWebrtcConnectionRequest struct {
-	RoomID string `json:"room_id"`
-	PeerID string `json:"peer_id"`
 }
 
 func NewPeer(peerId string, lang Lang, messagesBufSize int) *Peer {
@@ -360,7 +354,6 @@ func getTranscribeFunc(ctx context.Context, out chan<- string, lang Lang, token 
 				continue
 			case "conversation.item.input_audio_transcription.completed":
 				if tr, ok := msg["transcript"].(string); ok && tr != "" {
-					// не шлём в закрытый канал
 					select {
 					case out <- tr:
 					default:
@@ -382,7 +375,6 @@ func getTranscribeFunc(ctx context.Context, out chan<- string, lang Lang, token 
 		"session": map[string]any{
 			"input_audio_format": "pcm16",
 			"input_audio_transcription": map[string]any{
-				//"model": "gpt-4o-transcribe", // или gpt-4o-transcribe / whisper-1
 				"model":    "whisper-1", // или gpt-4o-transcribe / whisper-1
 				"language": lang,
 			},
@@ -720,8 +712,6 @@ func startWebrtcConnection(ctx context.Context, offerEncoded string, peer *Peer,
 		}
 	})
 
-	// Set the handler for Peer connection state
-	// This will notify you when the peer has connected/disconnected
 	peerConnection.OnConnectionStateChange(func(state webrtc.PeerConnectionState) {
 		switch state {
 		case webrtc.PeerConnectionStateFailed:
@@ -737,7 +727,6 @@ func startWebrtcConnection(ctx context.Context, offerEncoded string, peer *Peer,
 
 	internal.DecodeOffer(offerEncoded, &offer)
 
-	// Set the remote SessionDescription
 	if err = peerConnection.SetRemoteDescription(offer); err != nil {
 		panic(err)
 	}
@@ -747,17 +736,12 @@ func startWebrtcConnection(ctx context.Context, offerEncoded string, peer *Peer,
 		panic(err)
 	}
 
-	// Create channel that is blocked until ICE Gathering is complete
 	gatherComplete := webrtc.GatheringCompletePromise(peerConnection)
 
-	// Sets the LocalDescription, and starts our UDP listeners
 	if err = peerConnection.SetLocalDescription(answer); err != nil {
 		panic(err)
 	}
 
-	// Block until ICE Gathering is complete, disabling trickle ICE
-	// we do this because we only can exchange one app message
-	// in a production application you should exchange ICE Candidates via OnICECandidate
 	<-gatherComplete
 
 	answerData := make(map[string]string)
@@ -769,9 +753,6 @@ func startWebrtcConnection(ctx context.Context, offerEncoded string, peer *Peer,
 	}
 
 	peer.offers <- data
-
-	// Output the answer in base64 so we can paste it in browser
-	//fmt.Println(internal.EncodeOffer(peerConnection.LocalDescription()))
 
 	peer.pcReady.Store(true)
 
@@ -808,8 +789,6 @@ func translateTo(from, to Lang, token, value string) string {
 	if err != nil {
 		log.Fatalf("ChatCompletion error: %v\n", err)
 	}
-
-	fmt.Println(resp.Choices[0].Message.Content)
 
 	return resp.Choices[0].Message.Content
 }
