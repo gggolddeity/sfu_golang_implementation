@@ -902,7 +902,7 @@ func (rs *Server) joinRoom(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	room.AddPeer(peer)
+	room.addPeer(peer)
 	room.updateTranslationFlag()
 
 	response := make(map[string]interface{})
@@ -992,7 +992,7 @@ func (rs *Server) addRoom(appCtx context.Context) func(w http.ResponseWriter, r 
 			return
 		}
 
-		room.AddPeer(peer)
+		room.addPeer(peer)
 		room.updateTranslationFlag()
 		room.runHeartbeatTicker(appCtx)
 
@@ -1218,40 +1218,6 @@ func (room *Room) kickPeer(peerID string) {
 	room.PublishEvent(EventEnvelope{RoomID: room.ID, Version: 1, At: time.Now(), Seq: evtSeq, Type: EvtPeerLeft, Data: PeerRoomEventsPayload{Peer: room.toPeerView(peerViewEntity), Snapshot: room.rosterSnapshotLocked()}})
 }
 
-func (rs *Server) removePeer(roomID, peerID string) {
-	rs.mu.Lock()
-	defer rs.mu.Unlock()
-
-	empty, exists := false, false
-
-	var room *Room
-
-	if room, exists = rs.rooms[roomID]; exists {
-		fmt.Println(exists)
-		room.mu.Lock()
-		defer room.mu.Unlock()
-		member, memberFound := room.Peers[peerID]
-		if memberFound {
-			close(member.messages)
-			close(member.offers)
-			delete(room.Peers, peerID)
-		}
-
-		empty = len(room.Peers) == 0
-		if empty {
-			delete(rs.rooms, roomID)
-			return
-		}
-	} else {
-		return
-	}
-
-	room.mu.Lock()
-	evtSeq := room.incLockedEvtSeq()
-	room.mu.Unlock()
-	room.PublishEvent(EventEnvelope{RoomID: room.ID, Version: 1, Type: EvtPeerLeft, Seq: evtSeq, At: time.Now(), Data: PeerRoomEventsPayload{PeerID: peerID, Snapshot: room.rosterSnapshotLocked()}})
-}
-
 func (room *Room) rosterSnapshotLocked() Snapshot {
 	out := make([]PeerView, 0, len(room.Peers))
 	langs := map[Lang]bool{}
@@ -1266,7 +1232,6 @@ func (room *Room) rosterSnapshotLocked() Snapshot {
 
 	langsArr := slices.Collect(maps.Keys(langs))
 
-	// детерминированный порядок
 	sort.Slice(out, func(i, j int) bool {
 		if out[i].Name == out[j].Name {
 			return out[i].ID < out[j].ID
@@ -1276,7 +1241,7 @@ func (room *Room) rosterSnapshotLocked() Snapshot {
 	return Snapshot{Count: len(out), Peers: out, Langs: langsArr}
 }
 
-func (room *Room) AddPeer(peer *Peer) {
+func (room *Room) addPeer(peer *Peer) {
 	room.mu.Lock()
 	room.Peers[peer.ID] = peer
 	if _, foundLang := room.languages[peer.Lang]; !foundLang {

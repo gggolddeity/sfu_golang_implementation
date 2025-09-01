@@ -1,17 +1,14 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-### ---------- CONFIG ----------
 APP_NAME="webrtc_calls"
 GO_MAIN="./cmd/app"                 # путь к main (dir или файл)
 GOOS_TARGET="linux"
 GOARCH_TARGET="amd64"
 CGO_ENABLED=1
 
-# Где лежит статический фронт (локально)
 STATIC_LOCAL_DIR="${STATIC_LOCAL_DIR:-frontend}"
 
-# Сервер
 HOST="79.137.199.239"
 SSH_USER="deploy"
 SSH_KEY="${SSH_KEY:-/home/deity/.ssh/id_rsa}"
@@ -24,26 +21,22 @@ CONFIG_DIR="${APP_DIR}/config"
 STATIC_REMOTE_DIR="/opt/${APP_NAME}/${STATIC_LOCAL_DIR}/"
 LOG_DIR="/var/log/${APP_NAME}"
 
-# Пользователь, под которым крутится сервис
 APP_USER="${SSH_USER}"
 SERVICE_NAME="${APP_NAME}.service"
 
-# ENV-файл (локально), если нужен — передай ENV_FILE=/path/to/.env
 ENV_FILE="${ENV_FILE:-}"
 
-# Nginx / TLS
 SERVER_NAME="aigism.ru"
 ACME_WEBROOT="/var/www/letsencrypt"
 CERT_FULLCHAIN="/etc/letsencrypt/live/${SERVER_NAME}/fullchain.pem"
 CERT_PRIVKEY="/etc/letsencrypt/live/${SERVER_NAME}/privkey.pem"
-API_PORT="8081" # порт приложения
+API_PORT="8081"
 
-### ---------- SSH HELPERS ----------
 SSH_OPTS=(-o "Port=${PORT}" -i "${SSH_KEY}" -o "StrictHostKeyChecking=accept-new")
 DEST="${SSH_USER}@${HOST}"
 
 ssh_do() { ssh "${SSH_OPTS[@]}" "${DEST}" "$@"; }
-scp_put() { # scp_put SRC DST_REMOTE_PATH
+scp_put() {
   scp "${SSH_OPTS[@]}" "$1" "${DEST}:$2"
 }
 RSYNC_RSH="ssh -o Port=${PORT} -i ${SSH_KEY} -o StrictHostKeyChecking=accept-new"
@@ -57,7 +50,6 @@ remote_sudo() {
   fi
 }
 
-### ---------- FUNCS ----------
 build_locally() {
   echo "==> Go build"
   mkdir -p build

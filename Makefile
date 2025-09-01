@@ -1,2 +1,2 @@
 fastDep:
-	 SUDO_PASS='Poppy250' bash build.sh deploy
+	 SUDO_PASS='somepasswordtodeployment' bash build.sh deploy
